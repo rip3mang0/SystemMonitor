@@ -11,6 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(TS_FILES SystemMonitor_en_001.ts)
 
@@ -19,13 +21,32 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+
+        systemmonitor.h
+        systemmonitor.cpp
+
+        utils/systeminfo.h
+        utils/formatters.h
+
+        widgets/infocard.h
+        widgets/infocard.cpp
         ${TS_FILES}
 )
+
+#Platform specific sources
+if(WIN32)
+    list(APPEND PROJECT_SOURCES utils/systeminfo_win.cpp)
+elseif(APPLE)
+    list(APPEND PROJECT_SOURCES utils/systeminfo_mac.cpp)
+elseif(UNIX)
+    list(APPEND PROJECT_SOURCES utils/systeminfo_linux.cpp)
+endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(SystemMonitor
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        widgets/infocard.h widgets/infocard.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET SystemMonitor APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -50,6 +71,15 @@ else()
 endif()
 
 target_link_libraries(SystemMonitor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+#Platform-specific libraries
+if(WIN32)
+    target_link_libraries(SystemMonitor PRIVATE pdh iphlpapi psapi)
+elseif(APPLE)
+    target_link_libraries(SystemMonitor PRIVATE "-framework IOKit" "-framework Foundation")
+target_link_libraries(SystemMonitor PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(SystemMonitor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+endif()
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
