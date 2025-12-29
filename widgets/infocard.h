@@ -12,9 +12,19 @@ class InfoCard : public QWidget
     Q_OBJECT
 public:
     explicit InfoCard(const QString &title, QWidget *parent = nullptr);
+    // Setter Methods
+    void setValue(const QString &value);
+    void setPercentage(double percent);
+    void setIcon(const QIcon &icon);
+    void setIconText(const QString &iconText);
+    void setSubtitle(const QString &subtitle);
+    void updateTheme(); // Update colors for current theme
+
+signals:
 
 private:
     void setupUI();
+    void applyTheme();
 
 private:
     QString m_title;

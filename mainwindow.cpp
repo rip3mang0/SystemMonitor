@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     InfoCard* infocard = new InfoCard("CPU", this);
+    infocard->setValue("99%");
+    infocard->setPercentage(99);
+    infocard->setSubtitle("Processor activity");
     setCentralWidget(infocard);
 }
 

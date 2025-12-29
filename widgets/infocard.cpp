@@ -89,5 +89,108 @@ void InfoCard::setupUI()
     setGraphicsEffect(shadow);
 
     // Apply initial theme
-    // applyTheme();
+    applyTheme();
+}
+
+void InfoCard::setValue(const QString &value)
+{
+    m_valueLabel->setText(value);
+}
+
+void InfoCard::setPercentage(double percent)
+{
+    m_progressBar->setValue(static_cast<int>(percent));
+
+    //Auto-update color based on percentage
+    QColor barColor;
+    if (percent < 60.0) {
+        barColor = QColor("#4CAF50"); //Green
+    } else if (percent < 80) {
+        barColor = QColor("#FFC107"); // Amber
+    } else {
+        barColor = QColor("#F44336"); // Red
+    }
+
+    //setColor(barColor);
+
+    // Apply color to progress bar
+    m_progressBar->setStyleSheet(
+        QString("QProgressBar::chunk { background-color: %1; border-radius: 3px; }")
+            .arg(barColor.name())
+        );
+}
+
+void InfoCard::setIcon(const QIcon &icon)
+{
+    m_iconLabel->setPixmap(icon.pixmap(24,24));
+    m_iconLabel->setAlignment(Qt::AlignCenter);
+}
+
+void InfoCard::setIconText(const QString &iconText)
+{
+    m_iconLabel->setText(iconText);
+}
+
+void InfoCard::setSubtitle(const QString &subtitle)
+{
+    m_subtitleLabel->setText(subtitle);
+}
+
+void InfoCard::applyTheme()
+{
+    QPalette pal = palette();
+    bool isDark = (pal.color(QPalette::Window).lightness() < 128);
+
+    QString bgColor = isDark ? "#2C2C2C" : "white";
+    QString borderColor = isDark ? "#404040" : "#E0E0E0";
+    QString progressBg = isDark ? "#404040" : "#E0E0E0";
+
+    // Update icon background and glow effect based on theme
+    if (m_iconLabel) {
+        QString iconBgColor = isDark ? "#A0A0A0" : "#909090";
+        m_iconLabel->setStyleSheet(
+            "QLabel {"
+            " background-color: " + iconBgColor + ";"
+                            " border-radius: 4px;"
+                            " padding: 2px;"
+                            "}"
+            );
+        if (m_iconLabel->graphicsEffect()) {
+            QGraphicsDropShadowEffect *iconGlow = qobject_cast
+                <QGraphicsDropShadowEffect*>(m_iconLabel->graphicsEffect());
+            if (iconGlow) {
+                if (isDark) {
+                    // Strong white glow for dark mode
+                    iconGlow->setBlurRadius(20);
+                    iconGlow->setColor(QColor(255, 255, 255, 200));
+                } else {
+                    // Subtle shadow for light mode
+                    iconGlow->setBlurRadius(8);
+                    iconGlow->setColor(QColor(0, 0, 0, 60));
+                }
+            }
+        }
+    }
+
+    //Card styling
+    setStyleSheet(
+        "InfoCard {"
+        " background-color: " + bgColor + ";"
+                    " border-radius: 8px;"
+                    " border: 1px solid " + borderColor + ";"
+                        "}"
+        );
+    m_progressBar->setStyleSheet(
+        "QProgressBar {"
+        " border: none;"
+        " border-radius: 4px;"
+        " background-color: " + progressBg + ";"
+                       " text-align: center;"
+                       "}"
+        );
+}
+
+void InfoCard::updateTheme()
+{
+    applyTheme();
 }
