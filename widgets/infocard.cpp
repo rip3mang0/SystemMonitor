@@ -25,7 +25,7 @@ void InfoCard::setupUI()
     QHBoxLayout *headerLayout = new QHBoxLayout();
     headerLayout->setSpacing(6);
 
-    m_iconLabel->setFixedSize(24, 24);
+    m_iconLabel->setFixedSize(32, 32);
     m_iconLabel->setScaledContents(false);
     m_iconLabel->setAlignment(Qt::AlignCenter);
     QFont iconFont;
@@ -51,7 +51,7 @@ void InfoCard::setupUI()
     headerLayout->addWidget(m_iconLabel);
 
     m_titleLabel->setText(m_title);
-    m_titleLabel->setStyleSheet("font-size: 11pt; font-weight: bold;");
+    m_titleLabel->setStyleSheet("font-size: 16pt; font-weight: bold;");
     headerLayout->addWidget(m_titleLabel);
     headerLayout->addStretch();
 
@@ -122,7 +122,7 @@ void InfoCard::setPercentage(double percent)
 
 void InfoCard::setIcon(const QIcon &icon)
 {
-    m_iconLabel->setPixmap(icon.pixmap(24,24));
+    m_iconLabel->setPixmap(icon.pixmap(32,32));
     m_iconLabel->setAlignment(Qt::AlignCenter);
 }
 

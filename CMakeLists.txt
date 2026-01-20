@@ -13,6 +13,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(TS_FILES SystemMonitor_en_001.ts)
 
@@ -30,6 +31,8 @@ set(PROJECT_SOURCES
 
         widgets/infocard.h
         widgets/infocard.cpp
+        widgets/chartwidget.h
+        widgets/chartwidget.cpp
         ${TS_FILES}
 )
 
@@ -47,7 +50,19 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         widgets/infocard.h widgets/infocard.cpp
+        widgets/chartwidget.h widgets/chartwidget.cpp
     )
+    # Add resources (icons)
+    qt_add_resources(SystemMonitor "icons"
+        PREFIX "/icons"
+        FILES
+            resources/icons/app-icon.png
+            resources/icons/cpu.png
+            resources/icons/memory.png
+            resources/icons/disk.png
+            resources/icons/network.png
+    )
+
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET SystemMonitor APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
@@ -78,6 +93,7 @@ if(WIN32)
 elseif(APPLE)
     target_link_libraries(SystemMonitor PRIVATE "-framework IOKit" "-framework Foundation")
 target_link_libraries(SystemMonitor PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(SystemMonitor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(SystemMonitor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 endif()
 

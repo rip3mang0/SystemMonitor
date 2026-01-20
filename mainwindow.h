@@ -2,12 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QGridLayout>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
 }
 QT_END_NAMESPACE
+
+class InfoCard;
+class SystemMonitor;
 
 class MainWindow : public QMainWindow
 {
@@ -17,7 +21,24 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void onCpuUsageChanged(double usage);
+    void onMemoryUsageChanged(qint64 used, qint64 total);
+    void onNetworkActivityChanged(double downloadKBps, double uploadKBps);
+    void updateDiskUsage();
+
+private:
+    void setUpCards();
+    void setUpSystemMonitor();
 private:
     Ui::MainWindow *ui;
+    // InfoCard instances
+    InfoCard *m_cpuCard;
+    InfoCard *m_memoryCard;
+    InfoCard *m_diskCard;
+    InfoCard *m_networkCard;
+
+    // System monitoring
+    SystemMonitor *m_systemMonitor;
 };
 #endif // MAINWINDOW_H
